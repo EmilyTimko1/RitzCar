@@ -19,6 +19,7 @@ import android.widget.VideoView;
 public class MainActivityThirdTry extends AppCompatActivity {
     VideoView videoView;
     TextView speedTextView;
+    TextView locationTextView;
     String speedUnit = " MPH";
     double speedMPH;
     double minCarSpeed = 0;
@@ -43,6 +44,7 @@ public class MainActivityThirdTry extends AppCompatActivity {
 
         videoView = findViewById(R.id.videoView);
         speedTextView = findViewById(R.id.speedTextView);
+        locationTextView = findViewById(R.id.locationTextView);
         videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + videoId));
         //videoView.setVideoPath(videoPath);
         videoView.start();
@@ -54,6 +56,7 @@ public class MainActivityThirdTry extends AppCompatActivity {
             }
             else{
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,6 +77,7 @@ public class MainActivityThirdTry extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
                 }
                 else {
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
@@ -86,13 +90,12 @@ public class MainActivityThirdTry extends AppCompatActivity {
 
     LocationListener locationListener = new LocationListener() {
         Location location;
-
         @Override
         public void onLocationChanged(Location pCurrentLocation) {
             if (pCurrentLocation != null) {
                 this.location = pCurrentLocation;
 
-                if(speedMPH < 80){
+                if(speedMPH > 80){
                     speedMPH = 80;
                 }
                 if (pCurrentLocation.hasSpeed())
@@ -109,6 +112,10 @@ public class MainActivityThirdTry extends AppCompatActivity {
                 if(speedTextView != null){
                     speedTextView.setText(Double.toString(Math.floor(speedMPH*100)/100) + speedUnit);
                 }
+                /*if(locationTextView != null){
+                    locationTextView.setVisibility(View.VISIBLE);
+                    locationTextView.setText(pCurrentLocation.toString());
+                }*/
             }
         }
     };
